@@ -7,7 +7,7 @@ import javax.inject.Inject
 class CharacterRepository @Inject constructor(
     private val characterRepository: ICharacterRepository
 ) {
-    suspend fun getCharacters(): ResponseCharacters {
-        return characterRepository.getCharacters()
+    suspend fun getCharacters(page: Int): ResponseCharacters {
+        return characterRepository.getCharacters(page)
     }
 }

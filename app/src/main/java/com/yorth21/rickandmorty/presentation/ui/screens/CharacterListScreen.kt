@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +39,7 @@ import com.yorth21.rickandmorty.data.models.characters.Result
 fun CharacterListScreen(
     viewModel: CharacterListViewModel = hiltViewModel()
 ) {
-    val state by viewModel.state.collectAsState()
+
 
     val insets = WindowInsetsCompat.toWindowInsetsCompat(
         androidx.compose.ui.platform.LocalView.current.rootWindowInsets
@@ -54,15 +55,15 @@ fun CharacterListScreen(
                 end = 16.dp,
                 top = statusBarHeight.dp,
                 bottom = navigationBarHeight.dp)) {
-        CharacterList(Modifier.align(Alignment.TopCenter), state)
+        CharacterList(Modifier.align(Alignment.TopCenter), viewModel)
     }
 }
 
 @Composable
-fun CharacterList(modifier: Modifier, listCharacters: List<Result>) {
+fun CharacterList(modifier: Modifier, viewModel: CharacterListViewModel) {
     Column(modifier = modifier) {
         Header()
-        List(listCharacters)
+        List(viewModel)
     }
 }
 
@@ -92,10 +93,18 @@ fun Header() {
 }
 
 @Composable
-fun List(listCharacters: List<Result>) {
+fun List(viewModel: CharacterListViewModel) {
+    val state by viewModel.state.collectAsState()
+
     LazyColumn {
-        items(listCharacters) { character ->
+        items(state) { character ->
             CharacterItem(character)
+        }
+
+        item {
+            LaunchedEffect(Unit) {
+                viewModel.loadMoreCharacters()
+            }
         }
     }
 }
